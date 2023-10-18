@@ -1,0 +1,10 @@
+C:\Users\anabiev\source\repos\Drelclass\bin\Debug\Drelclass.exe.config
+C:\Users\anabiev\source\repos\Drelclass\bin\Debug\Drelclass.exe
+C:\Users\anabiev\source\repos\Drelclass\bin\Debug\Drelclass.pdb
+C:\Users\anabiev\source\repos\Drelclass\bin\Debug\DrelLibrary.dll
+C:\Users\anabiev\source\repos\Drelclass\bin\Debug\DrelLibrary.pdb
+C:\Users\anabiev\source\repos\Drelclass\obj\Debug\Drelclass.csproj.AssemblyReference.cache
+C:\Users\anabiev\source\repos\Drelclass\obj\Debug\Drelclass.csproj.CoreCompileInputs.cache
+C:\Users\anabiev\source\repos\Drelclass\obj\Debug\Drelclass.csproj.CopyComplete
+C:\Users\anabiev\source\repos\Drelclass\obj\Debug\Drelclass.exe
+C:\Users\anabiev\source\repos\Drelclass\obj\Debug\Drelclass.pdb
