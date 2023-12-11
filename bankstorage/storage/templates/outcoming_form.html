@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Склад</title>
+    {% load static %}
+</head>
+
+<body>
+    <style>
+        body {
+            background-color: #EEFFFF;
+            width: 1920px;
+            height: 100px;
+        }
+
+
+        header {
+            display: flex;
+            width: 1920px;
+            height: 80px;
+            margin-bottom: 1px;
+            color: white;
+            font-style: normal;
+            font-size: medium;
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #9CC9BA;
+            background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
+            margin-left: -5px;
+            align-items: center;
+
+
+        }
+
+        
+            
+
+        
+
+        .container1 {
+            display: flex;
+            width: 500px;
+            height: 80px;
+            color: white;
+            font-style: normal;
+            font-size: medium;
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #9CC9BA;
+            background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
+            margin-top: px;
+            margin-left: 10px;
+            flex-direction: column;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+
+
+        }
+
+
+        .box2 {
+            display: flex;
+            color: black;
+            flex-direction: row;
+            background-color:#9CC9BA; ;
+            width: 500px;
+            height: 80px;
+
+            background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            align-items: center;
+
+        }
+
+        p{
+          padding-left:10px ;
+        }
+        .parag{
+            margin-left:-100px;
+        }
+        .btn{
+            background-color: #9CC9BA;
+            width:168px ;
+            height:40px ;
+            margin-left: 32px;
+            border-top-left-radius: 5px;
+            border-top-right-radius:5px ;
+            border-bottom-left-radius:5px ;
+            border-bottom-right-radius:5px ;
+        }
+        .values{
+            text-decoration:none;
+            font-size: 12px;
+            color: black;
+        }
+      nav {
+  background-color: #9CC9BA;
+  background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
+  margin-left: 10%;
+  margin-right: 5%;
+
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: inherit;
+}
+
+li {
+  float: down;
+  position: relative;
+  font-size: 15px;
+}
+
+.navigation {
+  display: block;
+  padding: 10px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.navigation:hover {
+  background-color: #555;
+}
+
+ul ul {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #333;
+}
+
+ul li:hover > ul {
+  display: inherit;
+}
+
+ul ul li {
+  float: none;
+  width: 130px;
+}
+
+ul ul:hover .navigation {
+  background-color: #555;
+}
+    </style>
+    <header>
+            <button class="btn"><a class="values"  href=" http://localhost:8000/user/">Пользователи</a></button>
+            <button class="btn"><a class="values"  href=" http://localhost:8000/incoming/create/ ">Приходы</a> </button>
+            <button class="btn"><a class="values"  href=" http://localhost:8000/outcoming/create/ ">Расходы</a></button> 
+            <button class="btn"><a class="values"  href="http://localhost:8000/branch/create/">Филиалы</a></button>
+            <button class="btn"><a class="values"  href="http://localhost:8000/branch_access/create/">
+            Доступ к филиалам</a></button >
+            <button class="btn"><a class="values"  href="http://localhost:8000/storage/create/">Склады</a></button> 
+            <button class="btn"><a class="values"  href="{% url 'home' %}">Главная</a></button>
+            <p style="font-size: 30px;padding-left:2% "> Cклад</p>&nbsp;&nbsp;
+            <img src="https://vecherka.tj/wp-content/uploads/2020/06/logo-kommercbank.jpg" height="40px">
+            <div class="container1">
+                <div class="box2">
+                    <form action="{% url 'outcoming_search' %}" method="get">
+                        <input name="q" type="text" placeholder="Введите текст..."style="margin-left:10px ;">
+                        <button type="submit" name="submit" value="Search" style="background-color:#9CC9BA;">Найти</button>
+                    </form>
+                    &nbsp;&nbsp;
+                    <form action="{% url 'outcoming_list' %}" method="get">
+                         <button type="submit" name="submit"  style="background-color:#9CC9BA;">Перейти к расходам <a tabindex="2" href="outcoming_list.html"></a></button>
+                    </form>
+                </div>
+            </div>
+            {% if user.is_authenticated %}
+            <nav>
+                <ul>
+                     <li><a class="navigation" href="#">{{user.username}}</a>
+                        <ul>
+                            <li><a class="navigation" href="{% url 'logout' %}">Выход</a></li>
+                            <li>О пользователе:
+                            <ul>
+                            <li>Имя:{{user.first_name}}</li>
+                            <li>Фамилия:{{user.last_name}}</li>
+                            <li>Должность:{{user.pos.pname}}</li>
+                            <li>Тел:{{user.Tel}}</li>
+                            <li>Роль:{{user.rol.rname}}</li>
+                            </ul>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+    </header>
+    <br />
+    <form method="post"
+        style="background-color: #9CC9BA;height: 225px; width: 320px; background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);padding-top: 10px; margin-top:150px ;margin-left: 40%; color:#EEFFFF; 
+        border-top-left-radius:8px; 
+        border-top-right-radius: 8px;
+        border-bottom-left-radius: 8px; 
+        border-bottom-right-radius:8px ;">
+        {% csrf_token %}
+        {{ form.as_p}}
+        <center>
+        <input type="submit" value="Добавить" style="background-color: #9CC9BA;border-top-left-radius:8px; 
+        border-top-right-radius: 8px;
+        border-bottom-left-radius: 8px; 
+        border-bottom-right-radius:8px ;">
+    </center>
+    </form>
+    <footer
+        style="margin-top: 18%; font-size: larger;color:#FFFFFF; background-color: #42826d;height: 100px;padding-top: 2%; padding-left: 1%;">
+        &copy 2023 ОАО "Коммерсбанк Таджикистана"<br /> Тел.: +992 44 (630) 8888
+    </footer>
+</body>
+</html>
