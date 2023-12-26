@@ -9,7 +9,7 @@ class Userlogin(AbstractUser):
     pos=models.ForeignKey("Position",verbose_name="Должность",on_delete=models.CASCADE, null=True, blank=True)
     Tel=models.IntegerField("Тел",null=True, blank=True)
     rol=models.ForeignKey("Role",verbose_name="Роль",on_delete=models.CASCADE, null=True, blank=True)
-    
+    branch=models.ForeignKey("Branch",verbose_name="Филиал",on_delete=models.CASCADE,null=True,blank=True)
     def __str__(self):
         return self.Fio
         
@@ -25,7 +25,6 @@ class Role(models.Model):
 class Branch(models.Model):
     Address=models.CharField("Адрес",max_length=50)
     bname=models.CharField("Наименование",max_length=45)
-    user=models.ForeignKey("Userlogin",verbose_name="Пользователь",on_delete=models.CASCADE)
     
     def __str__(self):
         return self.bname
@@ -33,7 +32,6 @@ class Branch(models.Model):
     
 class Storage(models.Model):
     sname=models.CharField("Наименование",max_length=45)
-    user=models.ForeignKey("Userlogin",verbose_name='Пользователь',on_delete=models.CASCADE)
     branch=models.ForeignKey("Branch",verbose_name="Филиал",on_delete=models.CASCADE,null=True,blank=True)
 
     def __str__(self):
