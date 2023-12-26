@@ -28,9 +28,10 @@ class outcomingform(forms.ModelForm):
         fields=['user','inc','Counto','Recipient','outcoming_date','store']
         
 class storeform(forms.ModelForm):
+    branch=forms.ModelChoiceField(queryset=Branch.objects.all(),label="Филиал")
     class Meta:
         model=Storage
-        fields=['sname','user','branch']
+        fields=['sname','branch']
 
     
        
@@ -39,10 +40,11 @@ class storeform(forms.ModelForm):
 class branchform(forms.ModelForm):
     class Meta:        
         model=Branch
-        fields=['Address','bname','user']
+        fields=['Address','bname']
         
         
 class branch_accessform(forms.ModelForm):
+    branch=forms.ModelChoiceField(queryset=Branch.objects.all(),label="Филиал")
     class Meta:        
         model=Branch_access
         fields=['user','branch','store']

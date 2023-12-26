@@ -42,8 +42,8 @@
 
         .container1 {
             display: flex;
-            width: 280px;
-            height: 280px;
+            max-width: 320px;
+            max-height: 320px;
             color: white;
             font-style: normal;
             font-size: medium;
@@ -69,8 +69,8 @@
             flex-direction: row;
             background-color: #9CC9BA;
             background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
-            width: 280px;
-            height: 280px;
+            width: 320px;
+            height: 320px;
             padding-top: 0px;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
@@ -88,7 +88,7 @@
         }
         .btn{
             background-color: #9CC9BA;
-            width:168px ;
+            width:80px ;
             height:40px ;
             margin-left: 32px;
             border-top-left-radius: 5px;
@@ -169,8 +169,7 @@
     </style>
     <header>
         <button class="btn"><a class="values"  href="{% url 'home' %}">Главная</a></button>
-
-        <p style="font-size: 30px;padding-left:2%; ">Отчёт</p>&nbsp;&nbsp;
+        <p style="font-size: 30px;padding-left:18%;">Отчёт</p>&nbsp;&nbsp;
         <img src="https://vecherka.tj/wp-content/uploads/2020/06/logo-kommercbank.jpg" height="40px">
             {% if user.is_authenticated %}
             <nav>
@@ -196,14 +195,16 @@
      <div class="container1">
         <div class="box2">
             <form action="{% url 'reestr' %}" method="get">
-                <br/>
-                {% csrf_token %}
-                {{ form.as_p }}
-                <select id="choose_model">
+                <select id="choose_model" style="margin-left:3%; border-top-left-radius: 5px;border-top-right-radius:5px ;border-bottom-left-radius:5px ;border-bottom-right-radius:5px ;">
                     <option  {% if results_i is True %} selected {% endif %} value="incoming">Приходы</option>
                     <option  {% if results_o is True %} selected {% endif %} value="outcoming">Расходы</option>
                 </select>
-                <button type="submit" name="submit" value="Search" style="background-color:#9CC9BA;">Найти</button>
+                <br/>
+                {% csrf_token %}
+                {{ form.as_p }}
+                <center>
+                    <button type="submit" name="submit" value="Search" style="background-color:#9CC9BA;">Найти</button>
+                </center>
             </form>
         </div>
     </div>

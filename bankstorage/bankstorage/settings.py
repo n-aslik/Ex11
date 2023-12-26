@@ -81,18 +81,19 @@ WSGI_APPLICATION = 'bankstorage.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-
     'default': {
-       'ENGINE': 'django.db.backends.mysql',
+       'ENGINE': 'mssql',
         'NAME': 'storedb',
         'HOST':'127.0.0.1',
-        'PORT':'3306',
-        'USER':'root',
-        'PASSWORD':'@@n80092020',
+        'PORT':'1433',
+        'USER':'sa',
+        'PASSWORD':'Sa12345',
         'OPTIONS': {
-            'sql_mode':'traditional', 
-            }
+            'driver':'ODBC Driver 17 for SQL Server', 
         }
+       }
+    
+    
     }
 
 

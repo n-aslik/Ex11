@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login,logout
 from django.views.generic import TemplateView, ListView
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required,permission_required
+from django.views.decorators.csrf import csrf_protect
 from django.db import connection
 from django.contrib import messages
 
@@ -29,7 +30,8 @@ def user_update(request,id):
             'Fio':user.Fio,
             'pos':user.pos,
             'Tel':user.Tel,
-            'rol':user.rol
+            'rol':user.rol,
+            'branch':user.branch
             }
     form=userpageform(initial=initial_data)
     context={'form': form,'users':users}
@@ -45,22 +47,35 @@ def user_delete(request,id):
 
 def my_custom_update1():
     with connection.cursor() as cursor:
-        cursor.execute('''UPDATE storage_incoming,storage_outcoming SET Counti = IF(Counti>=0,IF(Counti>=storage_outcoming.Counto,Counti-storage_outcoming.Counto,Counti),0) WHERE storage_incoming.id>=1 and storage_incoming.id = storage_outcoming.inc_id;
-                          ''')
+        cursor.execute('''UPDATE storage_incoming SET Counti = IIF(Counti >= 0,IIF(Counti >= storage_outcoming.Counto, Counti - storage_outcoming.Counto, Counti),0) FROM storage_incoming
+JOIN storage_outcoming ON storage_incoming.id = storage_outcoming.inc_id
+WHERE storage_incoming.id >= 1; ''')
         # Если вы хотите сохранить изменения в базе данных, не забудьте вызвать метод commit()
         connection.commit()
 
 def my_custom_update2():
     with connection.cursor() as cursor:
-        cursor.execute('''UPDATE storage_outcoming,storage_incoming SET Counto = IF(Counto>=0,IF(Counto <= storage_incoming.Counti,Counto,0),0) WHERE storage_outcoming.id>=1 and storage_outcoming.inc_id=storage_incoming.id;
-                          ''')
+        cursor.execute('''UPDATE storage_outcoming
+SET Counto = 
+    CASE 
+        WHEN Counto >= 0 AND Counto <= storage_incoming.Counti THEN Counto
+        ELSE 0
+    END
+FROM storage_outcoming
+JOIN storage_incoming ON storage_outcoming.inc_id = storage_incoming.id
+WHERE storage_outcoming.id >= 1;''')
         # Если вы хотите сохранить изменения в базе данных, не забудьте вызвать метод commit()
         connection.commit()
+
+
         
 
 
-
 #Incoming#
+
+
+
+    
 def incoming_list (request):
     my_custom_update1()
     if request.user.rol in [1,2] or request.user.is_superuser==1:
@@ -86,16 +101,16 @@ def incoming_create(request):
                 return redirect('incoming_list')
     else:
         form=incomingform()
-        if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
+        if request.user.rol  in [1, 2] or request.user.is_superuser==1 or  request.user.branch.id >= 1 :
             if request.user.id >1:
                 form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-                form.fields['store'].queryset=Storage.objects.filter(user=request.user)
+                form.fields['store'].queryset=Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
             else:
                 form.fields['user'].queryset=Userlogin.objects.all()
-                form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-        elif request.user.rol not in [1,2]:
+                form.fields['store'].queryset=Storage.objects.all()
+        elif request.user.rol not in [1,2] or  request.user.branch.id>=1:
             form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user) 
+            form.fields['store'].queryset=Storage.objects.filter(Q(branch__id__gte=3) | Q(branch__userlogin__id__gte=3)).distinct()
         else:
             form.fields['user'].queryset=Userlogin.objects.all()
             form.fields['store'].queryset=Storage.objects.all()
@@ -120,17 +135,18 @@ def incoming_update(request,id):
 
             }
     form=incomingform(initial=initial_data1)
+    
     context={'form':form,'income':income}
-    if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
+    if request.user.rol  in [1, 2] or request.user.is_superuser==1 or  request.user.branch.id >= 1 :
         if request.user.id >1:
             form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user)
+            form.fields['store'].queryset=Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
         else:
             form.fields['user'].queryset=Userlogin.objects.all()
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-    elif request.user.rol not in [1,2]:
+            form.fields['store'].queryset=Storage.objects.all()
+    elif request.user.rol not in [1,2] or  request.user.branch.id>=1:
         form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-        form.fields['store'].queryset=Storage.objects.filter(user=request.user) 
+        form.fields['store'].queryset=Storage.objects.filter(Q(branch__id__gte=3) | Q(branch__userlogin__id__gte=3)).distinct()
     else:
         form.fields['user'].queryset=Userlogin.objects.all()
         form.fields['store'].queryset=Storage.objects.all()
@@ -168,24 +184,19 @@ def outcoming_create(request):
                 return redirect('outcoming_list')
     else:
         form=outcomingform()
-        if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
+        if request.user.rol  in [1, 2] or request.user.is_superuser==1   :
             if request.user.id >1:
                 form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-                form.fields['store'].queryset=Storage.objects.filter(user=request.user)
+                form.fields['store'].queryset=Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
             else:
                 form.fields['user'].queryset=Userlogin.objects.all()
-                form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-                
-
-        elif request.user.rol not in [1,2]:
+                form.fields['store'].queryset=Storage.objects.all()
+        elif request.user.rol not in [1,2]  :
             form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-            
+            form.fields['store'].queryset=Storage.objects.filter(Q(branch__id__gte=3) | Q(branch__userlogin__id__gte=3)).distinct()
         else:
             form.fields['user'].queryset=Userlogin.objects.all()
             form.fields['store'].queryset=Storage.objects.all()
-            
-
     return render(request,'outcoming_form.html',{'form':form})
 
 def outcoming_update(request,id):
@@ -206,20 +217,18 @@ def outcoming_update(request,id):
         'user':outcome.user
         
             }
-    form=outcomingform(initial=initial_data2)
+    form=outcomingform(initial=initial_data2) 
     context={'form':form,'outcome':outcome}
-    if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
+    if request.user.rol  in [1, 2] or request.user.is_superuser==1   :
         if request.user.id >1:
             form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user)
+            form.fields['store'].queryset=Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
         else:
             form.fields['user'].queryset=Userlogin.objects.all()
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-                
-    elif request.user.rol not in [1,2]:
+            form.fields['store'].queryset=Storage.objects.all()
+    elif request.user.rol not in [1,2]  :
         form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-        form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-            
+        form.fields['store'].queryset=Storage.objects.filter(Q(branch__id__gte=3) | Q(branch__userlogin__id__gte=3)).distinct()
     else:
         form.fields['user'].queryset=Userlogin.objects.all()
         form.fields['store'].queryset=Storage.objects.all()
@@ -234,23 +243,26 @@ def outcoming_delete(request,id):
     
 #Storage#
 def storage_list (request):
-    if request.user.rol in [1,2] or request.user.is_superuser==1:
-        if  request.user.id>1:
-            data6=Storage.objects.filter(user__gt=1)
-            return render(request,'storage_list.html',{'data6':data6})
-        else:
-            data6=Storage.objects.all()
-            return render(request,'storage_list.html',{'data6':data6})
-    elif request.user.rol not in [1,2]:
-        data6=Storage.objects.filter(user=request.user)
-        b_a=Branch_access.objects.get(user=3)
-        new_s=Storage.objects.filter(user=3)
-        for s in new_s:
-            s.sname=b_a.store.sname
-            s.branch=b_a.store.branch
-            s.save()
+    if request.user.rol in [1] or request.user.is_superuser==1:
+        data6=Storage.objects.all()
+        return render(request,'storage_list.html',{'data6':data6})
+    elif  request.user.rol in [2] or request.user.is_superuser==1:
+        new_s=Storage.objects.filter(Q(branch__id__gt=1) | Q(branch__userlogin__id__gt=1)).distinct()
+        b_a=Branch_access.objects.get(user=2)
+        new_s.sname=b_a.store.sname
+        new_s.branch=b_a.store.branch
         data6=new_s
         return render(request,'storage_list.html',{'data6':data6})
+    elif not request.user.is_superuser==1 :
+        b_a=Branch_access.objects.get(user=request.user)
+        new_s=Storage.objects.filter(Q(branch__id__gte=4) | Q(branch__userlogin__first_name=request.user)).distinct()
+        for s in new_s: 
+            s.sname=b_a.store.sname
+            s.branch=b_a.store.branch
+        data6=new_s
+        return render(request,'storage_list.html',{'data6':data6})
+    
+
     
     
 
@@ -261,25 +273,19 @@ def storage_create(request):
         return redirect('storage_list')
     else:
         form=storeform()
-        if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
+        if request.user.rol  in [1, 2] or request.user.is_superuser==1   :
             if request.user.id >1:
-                form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-                form.fields['sname'].queryset=Storage.objects.filter(user=request.user)
-                form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+                form.fields['sname'].queryset=Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
+                form.fields['branch'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
             else:
-                form.fields['user'].queryset=Userlogin.objects.all()
-                form.fields['sname'].queryset=Storage.objects.filter(user=request.user)
-                form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
-
-        elif request.user.rol not in [1,2]:
-            form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-            form.fields['sname'].queryset=Storage.objects.filter(user=request.user)
-            form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+                form.fields['sname'].queryset=Storage.objects.all()
+                form.fields['branch'].queryset=Branch.objects.all()
+        elif request.user.rol not in [1,2]  :
+            form.fields['sname'].queryset=Storage.objects.filter(Q(branch__id__gt=2) | Q(branch__userlogin__id__gt=2)).distinct()
+            form.fields['branch'].queryset=Branch.objects.filter(Q(id__gt=2) | Q(userlogin__id__gt=2)).distinct()
         else:
-            form.fields['user'].queryset=Userlogin.objects.all()
             form.fields['sname'].queryset=Storage.objects.all()
             form.fields['branch'].queryset=Branch.objects.all()
-
     return render(request,'storage_form.html',{'form':form})
 
 def storage_update(request,id):
@@ -293,28 +299,25 @@ def storage_update(request,id):
     else:
         initial_data3={
             'sname':stor.sname,
-            'user':stor.user
+            'branch':stor.branch
             }
     form=storeform(initial=initial_data3)
+    
     context={'form':form,'stor':stor}
-    if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
+    if request.user.rol  in [1, 2] or request.user.is_superuser==1   :
         if request.user.id >1:
-            form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-            form.fields['sname'].queryset=Storage.objects.filter(user=request.user)
-            form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+            form.fields['sname'].queryset=Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
+            form.fields['branch'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
         else:
-            form.fields['user'].queryset=Userlogin.objects.all()
-            form.fields['sname'].queryset=Storage.objects.filter(user=request.user)
-            form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
-
-    elif request.user.rol not in [1,2]:
-        form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-        form.fields['sname'].queryset=Storage.objects.filter(user=request.user)
-        form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+            form.fields['sname'].queryset=Storage.objects.all()
+            form.fields['branch'].queryset=Branch.objects.all()
+    elif request.user.rol not in [1,2]  :
+        form.fields['sname'].queryset=Storage.objects.filter(Q(branch__id__gt=2) | Q(branch__userlogin__id__gt=2)).distinct()
+        form.fields['branch'].queryset=Branch.objects.filter(Q(id__gt=2) | Q(userlogin__id__gt=2)).distinct()
     else:
-        form.fields['user'].queryset=Userlogin.objects.all()
         form.fields['sname'].queryset=Storage.objects.all()
         form.fields['branch'].queryset=Branch.objects.all()
+       
 
     return render(request,'storage_form.html',context)
 
@@ -326,17 +329,19 @@ def storage_delete(request,id):
 #########################################################################################
 #Branch#
 def branch_list (request):
-    if request.user.rol in [1,2] or request.user.is_superuser==1:
-        if  request.user.id>1:
-            data4=Branch.objects.filter(user__gt=1)
-            return render(request,'branch_list.html',{'data4':data4})
-        else:
-            data4=Branch.objects.all()
-            return render(request,'branch_list.html',{'data4':data4})
+    if request.user.rol in [1] or request.user.is_superuser==1:
+        data4=Branch.objects.all()
+        return render(request,'branch_list.html',{'data4':data4})
+    elif  request.user.rol in [2] or request.user.is_superuser==1:
+        new_b=Branch.objects.filter(Q(id__gt=1) | Q(userlogin__id__gt=1)).distinct()
+        b_a=Branch_access.objects.get(user=2)
+        new_b.bname=b_a.branch.bname
+        new_b.Address=b_a.branch.Address
+        data4=new_b
+        return render(request,'branch_list.html',{'data4':data4})
     elif request.user.rol not in [1,2]:
-        data4=Branch.objects.filter(user=request.user)
-        b_a=Branch_access.objects.get(user=3)
-        new_b=Branch.objects.filter(user=3)
+        b_a=Branch_access.objects.get(user=request.user)
+        new_b=Branch.objects.filter(Q(id__gt=3) | Q(userlogin__id__gte=3)).distinct()
         for b in new_b:
             b.bname=b_a.branch.bname
             b.Address=b_a.branch.Address
@@ -350,20 +355,22 @@ def branch_create(request):
         form.save()
         return redirect('branch_list')
     else:
-        form=branchform()    
-        if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
-            if request.user.id >1:
-                form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-                form.fields['bname'].queryset=Branch.objects.filter(user=request.user)
+        form=branchform()
+        
+        if request.user.rol  in [1, 2] or request.user.is_superuser==1:
+            if request.user.id > 1:
+                form.fields['bname'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
+                form.fields['Address'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
             else:
-                form.fields['user'].queryset=Userlogin.objects.all()
-                form.fields['bname'].queryset=Branch.objects.filter(user=request.user)
-        elif request.user.rol not in [1,2] :
-            form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-            form.fields['bname'].queryset=Branch.objects.filter(user=request.user)
+                form.fields['bname'].queryset=Branch.objects.all()
+                form.fields['Address'].queryset=Branch.objects.all()
+        elif request.user.rol not in [1,2]   :
+            form.fields['bname'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
+            form.fields['Address'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
         else:
-            form.fields['user'].queryset=Userlogin.objects.all()
             form.fields['bname'].queryset=Branch.objects.all()
+            form.fields['Address'].queryset=Branch.objects.all()
+           
 
     return render(request,'branch_form.html',{'form':form})
 
@@ -378,25 +385,26 @@ def branch_update(request,id):
     else:
         initial_data4={
             'Address':branc.Address,
-            'bname':branc.bname,
-            'user':branc.user
+            'bname':branc.bname
             }
     form=branchform(initial=initial_data4)
+    
     context={'form':form,'branc':branc}
-    if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
-        if request.user.id >1:
-            form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-            form.fields['bname'].queryset=Branch.objects.filter(user=request.user)
+    if request.user.rol  in [1, 2] or request.user.is_superuser==1   :
+        if request.user.id > 1:
+            form.fields['bname'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
+            form.fields['Address'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
         else:
-            form.fields['user'].queryset=Userlogin.objects.all()
-            form.fields['bname'].queryset=Branch.objects.filter(user=request.user)
-    elif request.user.rol not in [1,2] :
-        form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-        form.fields['bname'].queryset=Branch.objects.filter(user=request.user)
+            form.fields['bname'].queryset=Branch.objects.all()
+            form.fields['Address'].queryset=Branch.objects.all()
+    elif request.user.rol not in [1,2]   :
+        form.fields['bname'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
+        form.fields['Address'].queryset=Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
     else:
-        form.fields['user'].queryset=Userlogin.objects.all()
         form.fields['bname'].queryset=Branch.objects.all()
-
+        form.fields['Address'].queryset=Branch.objects.all()
+           
+        
     return render(request,'branch_form.html',context)
 
 def branch_delete(request,id):
@@ -417,8 +425,8 @@ def branch_access_list (request):
     elif request.user.rol not in [1,2]:
         data5=Branch_access.objects.filter(user=request.user)
         return render(request,'branch_access_list.html',{'data5':data5})
-    
-# @permission_required('storage.can_view_page')
+@csrf_protect    
+@permission_required('storage.can_view_page')
 def branch_access_create(request):
     if request.method=='POST':
         form=branch_accessform(request.POST)
@@ -427,27 +435,29 @@ def branch_access_create(request):
             return redirect('branch_access_list')
     else:
         form=branch_accessform()
-        if request.user.rol  in [1,2] or request.user.is_superuser==1:
+        if request.user.rol in [1, 2] or request.user.is_superuser == 1:
             if request.user.id > 1:
-                form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-                form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-                form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+                form.fields['user'].queryset = Userlogin.objects.filter(id__gt=1)
+                form.fields['store'].queryset = Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
+                form.fields['branch'].queryset = Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
             else:
-                form.fields['user'].queryset=Userlogin.objects.all()
-                form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-                form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+                form.fields['user'].queryset = Userlogin.objects.all()
+                form.fields['store'].queryset = Storage.objects.all()
+                form.fields['branch'].queryset = Branch.objects.all()
 
-        elif request.user.rol not in [1,2] :
-            form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-            form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+        elif request.user.rol not in [1, 2]:
+            form.fields['user'].queryset = Userlogin.objects.filter(Fio=request.user)
+            form.fields['store'].queryset = Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
+            form.fields['branch'].queryset = Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
+
         else:
-            form.fields['user'].queryset=Userlogin.objects.all()
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-            form.fields['branch'].queryset=Branch.objects.all()
+            form.fields['user'].queryset = Userlogin.objects.all()
+            form.fields['store'].queryset = Storage.objects.all()
+            form.fields['branch'].queryset = Branch.objects.all()
     context={'form':form}
     return render(request,'branch_access_form.html',context)
-
+@csrf_protect
+@permission_required('storage.can_view_page')
 def branch_access_update(request,id):
     bran_a=Branch_access.objects.all()
     bran=get_object_or_404(Branch_access,id=id)
@@ -464,25 +474,25 @@ def branch_access_update(request,id):
             }
     form=branch_accessform(initial=initial_data5)
     context={'form':form,'bran':bran}
-    if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
-        if request.user.id >1 :
-            form.fields['user'].queryset=Userlogin.objects.filter(id__gt=1)
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-            form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+    if request.user.rol in [1, 2] or request.user.is_superuser == 1:
+        if request.user.id > 1:
+            form.fields['user'].queryset = Userlogin.objects.filter(id__gt=1)
+            form.fields['store'].queryset = Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
+            form.fields['branch'].queryset = Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
         else:
-            form.fields['user'].queryset=Userlogin.objects.all()
-            form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-            form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+            form.fields['user'].queryset = Userlogin.objects.all()
+            form.fields['store'].queryset = Storage.objects.all()
+            form.fields['branch'].queryset = Branch.objects.all()
 
-    elif request.user.rol not in [1,2] :
-        form.fields['user'].queryset=Userlogin.objects.filter(Fio=request.user)
-        form.fields['store'].queryset=Storage.objects.filter(user=request.user)
-        form.fields['branch'].queryset=Branch.objects.filter(user=request.user)
+    elif request.user.rol not in [1, 2]:
+        form.fields['user'].queryset = Userlogin.objects.filter(Fio=request.user)
+        form.fields['store'].queryset = Storage.objects.filter(Q(branch__id__gte=1) | Q(branch__userlogin__id__gte=1)).distinct()
+        form.fields['branch'].queryset = Branch.objects.filter(Q(id__gte=1) | Q(userlogin__id__gte=1)).distinct()
+
     else:
-        form.fields['user'].queryset=Userlogin.objects.all()
-        form.fields['store'].queryset=Storage.objects.all()
-        form.fields['branch'].queryset=Branch.objects.all()
-    
+        form.fields['user'].queryset = Userlogin.objects.all()
+        form.fields['store'].queryset = Storage.objects.all()
+        form.fields['branch'].queryset = Branch.objects.all()
     return render(request,'branch_access_form.html',context)
 
 def branch_access_delete(request,id):
@@ -530,8 +540,8 @@ def reestr(request):
             query_de=form.cleaned_data.get('query_de')
             if request.user.rol  in [1, 2] or request.user.is_superuser==1 :
                 if request.user.id >1 :
-                    results_i=Incoming.objects.filter(Q(store__branch__bname__contains=query_b) & Q(incoming_date__range=(query_ds,query_de)) & Q(user__in=[2,3])).order_by('incoming_date')
-                    results_o=Outcoming.objects.filter(Q(store__branch__bname__contains=query_b) & Q(inc__incoming_date__range=(query_ds,query_de)) & Q(user__in=[2,3])).order_by('incoming_date')
+                    results_i=Incoming.objects.filter(Q(store__branch__bname__contains=query_b) & Q(incoming_date__range=(query_ds,query_de)) & Q(user=2)).order_by('incoming_date')
+                    results_o=Outcoming.objects.filter(Q(store__branch__bname__contains=query_b) & Q(inc__incoming_date__range=(query_ds,query_de)) & Q(user=2)).order_by('inc__incoming_date')
                     return render(request,'reestr_list.html',{'form':form,'results_i': results_i,'results_o': results_o})
                 else:
                     results_i=Incoming.objects.filter(Q(store__branch__bname__contains=query_b) & Q(incoming_date__range=(query_ds,query_de))& Q(user__in=[1,3])).order_by('incoming_date')
@@ -608,10 +618,3 @@ class StorageSearchResultsView(ListView):
         query = self.request.GET.get("q")
         object_list = Storage.objects.all().filter(Q(sname__icontains=query))
         return object_list
-
-
-       
-
-    
-
-
