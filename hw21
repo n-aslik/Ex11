@@ -1,0 +1,4 @@
+SELECT department, SUM(salary) as "salary summa"
+from employees
+GROUP BY department
+HAVING AVG(salary)>50000;
