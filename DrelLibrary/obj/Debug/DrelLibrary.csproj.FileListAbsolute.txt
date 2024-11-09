@@ -1,6 +1,0 @@
-C:\Users\anabiev\source\repos\DrelLibrary\bin\Debug\DrelLibrary.dll
-C:\Users\anabiev\source\repos\DrelLibrary\bin\Debug\DrelLibrary.pdb
-C:\Users\anabiev\source\repos\DrelLibrary\obj\Debug\DrelLibrary.csproj.AssemblyReference.cache
-C:\Users\anabiev\source\repos\DrelLibrary\obj\Debug\DrelLibrary.csproj.CoreCompileInputs.cache
-C:\Users\anabiev\source\repos\DrelLibrary\obj\Debug\DrelLibrary.dll
-C:\Users\anabiev\source\repos\DrelLibrary\obj\Debug\DrelLibrary.pdb
