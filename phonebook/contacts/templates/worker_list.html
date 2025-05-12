@@ -8,161 +8,221 @@
     <title>Телефонный справочник</title>
     {% load static %}
     <link href="{% static 'csss/sites.css' %}" rel="stylesheet" type="text/css">
-</head>
-
-<body>
     <style>
-        body {
-            background-color: rgb(42, 42, 42);
-            width: 1920px;
-            height: 100px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .site {
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        body {
+            background-color: rgb(42, 42, 42);
             color: white;
-            font-size: 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
         }
 
         .container {
             display: flex;
-            width: 1920px;
-            height: 80px;
-            margin-bottom: 1px;
-            color: white;
-            font-style: normal;
-            font-size: medium;
-            font-family: 'Times New Roman', Times, serif;
-            background-color: #9CC9BA;
-            background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
-        }
-
-        .box {
-            display: flex;
-            width: 1920px;
-            height: 50px;
-            flex-direction: row;
+            flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
-            padding-top: 10px;
-            font-size: xx-large;
-        }
-        .container1 {
-            display: flex;
-            width: 800px;
-            height: 100px;
-            color: white;
-            font-style: normal;
-            font-size: medium;
-            font-family: 'Times New Roman', Times, serif;
-            background-color: #9CC9BA;
-            background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
-            margin-top: 10px;
-            flex-direction: column;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
+            justify-content: space-between;
+            padding: 1rem;
+            background: linear-gradient(to right, #d35400, orange);
         }
 
-        .box1 {
-            display: flex;
-            color: white;
-            flex-direction: column;
-            width: 800px;
-            height: 50px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            text-align: left;
-            font-size: large;
+        .container .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
         }
 
-        .box2 {
+        .container .nav {
             display: flex;
+            gap: 1rem;
+        }
+
+        .container .nav a {
+            background-color: white;
             color: black;
-            flex-direction: row;
-            background-color: #EEFFFF;
-            width: 800px;
-            height: 50px;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
-            align-items: center;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .container .nav a:hover {
+            background-color: #ffd699;
+        }
+
+        .title {
+            text-align: center;
+            margin: 1.5rem 0;
+            font-size: 2rem;
+        }
+
+        .filter-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(to top, rgba(100, 50, 50, 0.8), orange);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .filter-box label {
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .filter-box form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .filter-box input[type="text"] {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .filter-box button {
+            background-color: white;
+            color: black;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .filter-box button:hover {
+            background-color: #ffd699;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem auto;
+            max-width: 1000px;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: center;
         }
 
         th {
-            background-color: #9CC9BA;
-            background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
-            table-layout: fixed;
-            font-size: larger;
-            width: 1920px;
+            background: linear-gradient(to right, #d35400, orange);
+            color: white;
         }
 
         td {
-            background-color: #EEFFFF;
-            width: 1920px;
+            background-color: #f2f2f2;
+            color: black;
+        }
+
+        td a {
+            text-decoration: none;
+            color: #d35400;
+            margin: 0 0.5rem;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 3rem;
+            background-color: orange;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .filter-box form {
+                flex-direction: column;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            td, th {
+                padding: 0.5rem;
+            }
         }
     </style>
-    <div class="container">
-        <div class="box">
-            <button style="background-color: #9CC9BA;width:120px ;height:30px ;margin-left: -650px;"><a href=" http://localhost:8000/worker/create/" style="text-decoration:none;font-size: 15px; color: black;">Сотрудники</a></button>
-            {% if user.is_authenticated %}
-            <button style="background-color:#9CC9BA;  margin-left: 40px; width:120px ;height:30px ;"  ><a href="{% url 'logout' %}" style="font-size:15px; text-decoration: none; color:black;">Выход</a></button>
-            {% endif %}
-            <p style="font-size: medium; padding-left: 30px; margin-left: 300px; " > Cписок <br/> телефонов</p>
-            <img src="https://vecherka.tj/wp-content/uploads/2020/06/logo-kommercbank.jpg" height="40px">
-            
-        </div>
-    </div>
-    <div class="container1">
-        <div class="box1">
-            <p>Фильтр</p>
-        </div>
-        <div class="box2">
-            <label>Поиск по:</label>
-            <!-- <select id="filter_criteria" name="filter_criteria">
-                <option selected="">ФИО</option>
-                <option selected="">пол</option>
-                <option selected="">рабочий номер</option>
-                <option selected="">мобильный номер</option>
-                <option selected="">email</option>
-                <option selected="">Подразделение</option>
-            </select> -->
-            <!-- <input name="filter_criteria" type="search" placeholder="Введите текст для поиска" 
-                    id="filter_text">
+</head>
 
-                <input type="submit" value="Найти">
-                <input type="submit" value="Удалить фильтр"> -->
-            <form action="{% url 'search' %}" method="get">
-                <input name="q" type="text" placeholder="Search...">
-                <button type="submit" name="submit" value="Search" style="background-color: lightseagreen;">Найти</button>
-            </form>
+<body>
+
+    <div class="container">
+        <div class="logo">Телефонный справочник</div>
+        <div class="nav">
+            <a href="http://localhost:8000/worker/create/">Сотрудники</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}">Выход</a>
+            {% endif %}
         </div>
     </div>
-    <br />
+
+    <div class="title">Список телефонов</div>
+
+    <div class="filter-box">
+        <label>Фильтр:</label>
+        <form action="{% url 'search' %}" method="get">
+            <input name="q" type="text" placeholder="Введите текст для поиска...">
+            <button type="submit">Найти</button>
+        </form>
+    </div>
+
     <table>
-        <tr>
-            <th>ФИО</th>
-            <th>Пол</th>
-            <th>рабочий номер</th>
-            <th>мобильный номер</th>
-            <th>Email</th>
-            <th>Подразделение</th>
-            <th>Действие</th>
-        </tr>
-        {% for item in data %}
-        <tr>
-            <td>{{ item.FIO }}</td>
-            <td>{{ item.gen.polcnom}}</td>
-            <td>{{ item.work_number }}</td>
-            <td>{{ item.mobi_number }}</td>
-            <td>{{ item.email }}</td>
-            <td>{{ item.struct.structcnom }}</td>
-            
-            <td><a href="{% url 'worker_update' item.id %}" style="text-decoration: none; color: black; align-content:space-around;">Изменить</a>|<a href="{% url 'worker_delete' item.id %}" style="text-decoration: none; color: black;align-content:space-around;">Удалить</a></td>
-        </tr>
-        {% endfor %}
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Пол</th>
+                <th>Раб. номер</th>
+                <th>Моб. номер</th>
+                <th>Email</th>
+                <th>Подразделение</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.FIO }}</td>
+                <td>{{ item.gen.polcnom }}</td>
+                <td>{{ item.work_number }}</td>
+                <td>{{ item.mobi_number }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.struct.structcnom }}</td>
+                <td>
+                    <a href="{% url 'worker_update' item.id %}">Изменить</a> |
+                    <a href="{% url 'worker_delete' item.id %}">Удалить</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
-            
-    <footer style="margin-top: 27%; font-size: larger;color:#FFFFFF; background-color:#42826d;height: 100px;padding-top: 2%;padding-left: 1%;">&copy 2023 ОАО "Коммерсбанк Таджикистана"<br/> Тел.: +992 44 (630) 8888</footer>    
+
+    <footer>
+        Тел.: +992 200 94 91 91
+    </footer>
+
 </body>
+
 </html>

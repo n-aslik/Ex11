@@ -77,15 +77,12 @@ WSGI_APPLICATION = 'phonebook.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'firstdb',
-        'HOST':'127.0.0.1',
-        'PORT':'3306',
-        'USER':'root',
-        'PASSWORD':'@@n80092020',
-        'OPTIONS': {
-            'sql_mode':'traditional',
-        }
+        'USER': 'postgres',
+        'PASSWORD': '@@sl8998',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

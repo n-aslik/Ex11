@@ -9,8 +9,8 @@ class worker(models.Model):
     user=models.OneToOneField("User", verbose_name='Пользователь',on_delete=models.CASCADE,null=True,blank=True)
     FIO=models.CharField("ФИО",max_length=45)
     gen=models.ForeignKey("pol", verbose_name='Пол', on_delete=models.CASCADE,null=True,blank=True)
-    work_number=models.IntegerField('рабочий номер')
-    mobi_number=models.IntegerField('мобильный номер')
+    work_number=models.CharField('рабочий номер', max_length=9)
+    mobi_number=models.CharField('мобильный номер',max_length=9)
     email=models.EmailField("email",max_length=45)
     struct=models.ForeignKey("structure", verbose_name='Подразделение', on_delete=models.CASCADE,null=True,blank=True)
 
@@ -24,7 +24,7 @@ class pol(models.Model):
         return self.polcnom
     
 class structure(models.Model):
-    structcnom=models.CharField(max_length=2)
+    structcnom=models.CharField()
     def __str__(self):
         return self.structcnom
 

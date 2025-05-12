@@ -1,147 +1,163 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Телефонный справочник</title>
     {% load static %}
     <link href="{% static 'csss/sites.css' %}" rel="stylesheet" type="text/css">
-</head>
-
-<body>
     <style>
         body {
-            background-color: rgb(42, 42, 42);
-            width: 1920px;
-            height: 800px;
-        }
-
-        .site {
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-            color: white;
-            font-size: 15px;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
         }
 
         .container {
             display: flex;
-            width: 1920px;
-            height: 80px;
-            margin-bottom: 1px;
-            color: white;
-            font-style: normal;
-            font-size: medium;
-            font-family: 'Times New Roman', Times, serif;
-            background-color: #9CC9BA;
-            background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to top, rgba(100, 50, 50, 0.8), orange);
+            padding: 20px;
         }
 
-        .box {
-            display: flex;
-            width: 1920px;
-            height: 50px;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            padding-top: 10px;
-            font-size: xx-large;
+        .container p {
+            font-size: 2rem;
+            margin: 0;
+            color: white;
         }
 
         .container1 {
-            display: flex;
-            width: 800px;
-            height: 100px;
+            max-width: 600px;
+            margin: 20px auto;
+            background: linear-gradient(to top, rgba(100, 50, 50, 0.8), orange);
+            border-radius: 10px;
+            padding: 20px;
             color: white;
-            font-style: normal;
-            font-size: medium;
-            font-family: 'Times New Roman', Times, serif;
-            background-color: #9CC9BA;
-            background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
-            margin-top: 10px;
-            flex-direction: column;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
         }
 
         .box1 {
-            display: flex;
-            color: white;
-            flex-direction: column;
-            width: 800px;
-            height: 50px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            text-align: left;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
         }
 
         .box2 {
-            display: flex;
-            color: black;
-            flex-direction: row;
             background-color: #EEFFFF;
-            width: 800px;
-            height: 50px;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
             align-items: center;
         }
 
-        th {
-            background-color: #9CC9BA;
-            background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA);
-            table-layout: fixed;
-            font-size: larger;
-            width: 1920px;
+        .box2 input[type="text"] {
+            padding: 8px;
+            font-size: 1rem;
+            width: 60%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
 
-        td {
-            background-color: #EEFFFF;
-            width: 1920px;
+        .box2 button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: orange;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
         }
 
-        .btn {
-            background-color: #42826d;
-            font-size: medium;
-            border-radius: 2%;
+        .box2 button:hover {
+            background-color: darkorange;
+        }
+
+        form[action*="worker_list"] button {
+            margin-left: 10px;
+        }
+
+        form[method="post"] {
+            background: linear-gradient(to top, rgba(100, 50, 50, 0.8), orange);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 350px;
+            margin: 40px auto;
+            color: white;
+        }
+
+        form[method="post"] input[type="submit"] {
+            background-color: white;
+            color: orange;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        form[method="post"] input[type="submit"]:hover {
+            background-color: #ffcc99;
+        }
+
+        footer {
+            margin-top: 60px;
+            font-size: 1.1rem;
+            color: white;
+            background-color: orange;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .box2 input[type="text"] {
+                width: 100%;
+            }
+
+            form[method="post"] {
+                width: 90%;
+                padding: 20px;
+            }
         }
     </style>
+</head>
+<body>
+
     <div class="container">
-        <div class="box">
-            <p style="font-size: medium;"> Cписок <br /> телефонов</p>
-            <img src="https://vecherka.tj/wp-content/uploads/2020/06/logo-kommercbank.jpg"
-                height="40px">
-        </div>
+        <p>Список телефонов</p>
     </div>
+
     <div class="container1">
         <div class="box1">
             <p>Фильтр</p>
         </div>
         <div class="box2">
-            <label>Поиск по:</label>
-            <form action="{% url 'search' %}" method="get">
-                <input name="q" type="text" placeholder="Search...">
-                <button type="submit" name="submit" value="Search" style="background-color:#9CC9BA;">Найти</button>
+            <form action="{% url 'search' %}" method="get" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                <label for="search">Поиск по:</label>
+                <input name="q" type="text" id="search" placeholder="Поиск...">
+                <button type="submit" name="submit" value="Search">Найти</button>
             </form>
-                <form action="{% url 'worker_list' %}" method="get">
-                <button type="submit" name="submit"  style="background-color:#9CC9BA;">Перейти на
-                    cписок сотрудников<a tabindex="2" href="worker_list.html"></a></button>
+            <form action="{% url 'worker_list' %}" method="get">
+                <button type="submit" name="submit">Список сотрудников</button>
             </form>
         </div>
-
     </div>
-    <br />
-    <form method="post"
-        style="background-color: #9CC9BA; width: 500px; background-image: linear-gradient(to top, rgba(14, 59, 44, 100), #9CC9BA); color:#EEFFFF;">
+
+    <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Добавить" style="background-color: #9CC9BA;">
+        <input type="submit" value="Добавить">
     </form>
-    <footer
-        style="margin-top: 11%; font-size: larger;color:#FFFFFF; background-color: #42826d;height: 100px;padding-top: 2%; padding-left: 1%;">
-        &copy 2023 ОАО "Коммерсбанк Таджикистана"<br /> Тел.: +992 44 (630) 8888
+
+    <footer>
+        Тел.: +992 200 94 91 91
     </footer>
+
 </body>
 </html>
