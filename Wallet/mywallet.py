@@ -229,6 +229,8 @@ mode_menu.add_command(label='Выйти',command=toexit)
 wall_menu.add_cascade(label='Меню',menu=mode_menu)
 
 win.title('Мой_кошелёк')
+photo = tk.PhotoImage(file="mw.png")
+win.iconphoto(True, photo)
 win.iconbitmap("mw.ico")
 
 win.config(bg='pink',menu=wall_menu)
