@@ -2,7 +2,6 @@ import sqlite3
 import tkinter as tk
 from tkinter import ttk,messagebox
 from tkinter import*
-from currency_converter import CurrencyConverter
 import datetime
  
 def updbalans():
@@ -232,8 +231,7 @@ wall_menu.add_cascade(label='Меню',menu=mode_menu)
 win.title('Мой_кошелёк')
 
 win.config(bg='pink',menu=wall_menu)
-
-win.geometry('520x800')
+win.geometry('367x350')
 
 
 win.option_add("*tearoff",False)
@@ -293,7 +291,7 @@ user_label.config(font=('Calibri',12))
 
 user_label.grid(row=1,column=0,sticky='wens')
 
-id_label=tk.Label(win,text='ID',width=5,bd=2,relief=tk.SUNKEN)
+id_label=tk.Label(win,text='ID',width=6, bd=2, anchor="w",relief=tk.SUNKEN)
 
 id_label.config(font=('Calibri',12))
 
@@ -311,54 +309,6 @@ e7=tk.Entry(win,width=5)
 e7.config(font=('Calibri',12))
 
 e7.grid(row=1,column=2,sticky='ens')
-
-#
-
-
-#Курс денег
-
-c=CurrencyConverter()
-
-curren=1
-
-res=c.convert(curren,'USD','EUR')
-
-
-usd_n=IntVar()
-
-usd_n.set(curren)
-
-eur_n=IntVar()
-
-eur_n.set(round(res,6))
-
-
-img=PhotoImage(file='conv.png')
-
-Empty=tk.Label(win,bd=2,height=400,bg='orange',image=img,relief=tk.RAISED)
-
-Empty.grid(row=6,column=0,sticky='wens',columnspan=4)
-
-img1=PhotoImage(file='usd.png')
-
-usdlab=tk.Label(win,image=img1,bg='lightgray',fg='blue',relief=tk.RAISED)
-
-usdlab.grid(row=7,column=0,sticky='wens')
-
-usdlab1=tk.Label(win,textvariable=usd_n,bg='lightgray',fg='blue',relief=tk.RAISED)
-
-usdlab1.grid(row=7,column=1,sticky='wens')
-
-
-img2=PhotoImage(file='eur.png')
-
-eurlab=tk.Label(win,image=img2,bg='lightgray',fg='blue',relief=tk.RAISED)
-
-eurlab.grid(row=7,column=2,sticky='wens')
-
-eurlab1=tk.Label(win,textvariable=eur_n,bg='lightgray',fg='blue',relief=tk.RAISED)
-
-eurlab1.grid(row=7,column=3,sticky='wens')
 
 #
 
@@ -382,7 +332,7 @@ moneytransfer_btn.config(font=('Calibri',12))
 moneytransfer_btn.grid(row=9,column=1,sticky='wens')
 
 
-opera_btn=tk.Button(win,text='Д/В',bg='purple',width=5,bd=2,fg='orange',relief=tk.SUNKEN,height=1,command=updbalans)
+opera_btn=tk.Button(win,text='Д/В',bg='purple', width=5,bd=2,fg='orange',relief=tk.SUNKEN,height=1,command=updbalans)
 
 opera_btn.config(font=('Calibri',12))
 
@@ -390,7 +340,7 @@ opera_btn.grid(row=9,column=2,sticky='wens',columnspan=2)
 
 img3=PhotoImage(file='card.png')
 
-cards_btn=tk.Button(win,text='Мои карты',bg='purple',width=5,image=img3,bd=2,fg='orange',relief=tk.SUNKEN,height=20, compound='left',command=my_cards)
+cards_btn=tk.Button(win,text='Мои карты',bg='purple',width=20,image=img3,bd=2,fg='orange',relief=tk.SUNKEN,height=30, compound='left',command=my_cards)
 
 cards_btn.config(font=('Calibri',12))
 
@@ -400,7 +350,7 @@ cards_btn.grid(row=10,column=0,sticky='wens',columnspan=4)
 
 date_now=datetime.datetime.now()
 
-Empty1=tk.Label(win,bd=2,height=5,justify=tk.LEFT,bg='orange',fg='blue',anchor='w',text=f'''Дата и время:{date_now:%d-%m-%y %H:%M}\n#NabievAsliddin\nphone:200-94-91-91\nemail:aslnabiev2002@gmail.com''')
+Empty1=tk.Label(win,bd=2,height=5, padx=30,bg='orange',fg='blue',anchor='center',text=f'''Дата и время:{date_now:%d-%m-%y %H:%M}\n#NabievAsliddin\nphone:200-94-91-91\nemail:aslnabiev2002@gmail.com''')
 
 Empty1.config(font=('Arial',14,'bold'))
 
