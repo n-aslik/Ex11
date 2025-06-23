@@ -229,12 +229,12 @@ mode_menu.add_command(label='Выйти',command=toexit)
 wall_menu.add_cascade(label='Меню',menu=mode_menu)
 
 win.title('Мой_кошелёк')
+win.iconbitmap("mw.ico")
 
 win.config(bg='pink',menu=wall_menu)
 win.geometry('367x350')
 
-photo = tk.PhotoImage(file="mw.ico")
-win.iconphoto(True, photo)
+
 
 win.option_add("*tearoff",False)
 
