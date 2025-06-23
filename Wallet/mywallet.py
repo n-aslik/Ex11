@@ -332,13 +332,13 @@ eur_n=IntVar()
 eur_n.set(round(res,6))
 
 
-img=PhotoImage(file='images\conv.png')
+img=PhotoImage(file='conv.png')
 
 Empty=tk.Label(win,bd=2,height=400,bg='orange',image=img,relief=tk.RAISED)
 
 Empty.grid(row=6,column=0,sticky='wens',columnspan=4)
 
-img1=PhotoImage(file='images\usd.png')
+img1=PhotoImage(file='usd.png')
 
 usdlab=tk.Label(win,image=img1,bg='lightgray',fg='blue',relief=tk.RAISED)
 
@@ -349,7 +349,7 @@ usdlab1=tk.Label(win,textvariable=usd_n,bg='lightgray',fg='blue',relief=tk.RAISE
 usdlab1.grid(row=7,column=1,sticky='wens')
 
 
-img2=PhotoImage(file='images\eur.png')
+img2=PhotoImage(file='eur.png')
 
 eurlab=tk.Label(win,image=img2,bg='lightgray',fg='blue',relief=tk.RAISED)
 
@@ -387,7 +387,7 @@ opera_btn.config(font=('Calibri',12))
 
 opera_btn.grid(row=9,column=2,sticky='wens',columnspan=2)
 
-img3=PhotoImage(file='images\card.png')
+img3=PhotoImage(file='card.png')
 
 cards_btn=tk.Button(win,text='Мои карты',bg='purple',width=5,image=img3,bd=2,fg='orange',relief=tk.SUNKEN,height=20, compound='left',command=my_cards)
 
