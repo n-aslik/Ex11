@@ -237,10 +237,6 @@ win.geometry('520x800')
 
 win.option_add("*tearoff",False)
 
-ico=PhotoImage(file='mw.png')
-
-win.iconphoto(True,ico)
-
 win.resizable(False,False)
 
 
