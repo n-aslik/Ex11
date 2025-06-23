@@ -233,6 +233,8 @@ win.title('Мой_кошелёк')
 win.config(bg='pink',menu=wall_menu)
 win.geometry('367x350')
 
+photo = tk.PhotoImage(file="mw.ico")
+win.iconphoto(True, photo)
 
 win.option_add("*tearoff",False)
 
