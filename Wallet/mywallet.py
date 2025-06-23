@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk,messagebox
 from tkinter import*
 import datetime
- 
+# region Обновление баланса
 def updbalans():
     def chng1():
         conn = sqlite3.connect('my_wallet.db')
@@ -50,7 +50,9 @@ def updbalans():
     e6.grid(row=0,column=1,sticky='wens')
     u.mainloop()
 
+# endregion
 
+#region поиск пользователя
 
 def find_user():
     conn=sqlite3.connect('my_wallet.db')
@@ -71,7 +73,8 @@ def find_user():
         messagebox.showerror("Ошибка","Поиск неудался!")
     e1.delete(0,"end")
 
-
+# endregion
+# region уведомления
 def notice():
     conn=sqlite3.connect('my_wallet.db')
     curs=conn.cursor()
@@ -85,9 +88,9 @@ def notice():
     conn.close()
 
 
+# endregion
 
-
-
+# region новый пользователь
 def newuser():
     def add():
         a_u=e4.get()
@@ -125,15 +128,10 @@ def newuser():
     newu_btn.grid(row=3,column=0,columnspan=2,sticky='wens')
     
     w.mainloop()
-
-
-
     
+# endregion
 
-
-            
-
-
+#c region моя карта
 def my_cards():
     mc=Tk()
     mc.geometry('400x100')
@@ -149,6 +147,10 @@ def my_cards():
         msg_l=tk.Label(mc,text=f'Ваши карты:{i}\t',fg='blue',bg='yellow',font=('Arial',12,'bold')).grid(row=0,column=0,sticky='wens')
     conn.close()
     mc.mainloop()
+    
+# endregion
+
+# region перевод денег
 
 def money_transfer():
     def transfer():
@@ -203,16 +205,15 @@ def money_transfer():
     transf_btn.grid(row=1,column=2,sticky='wens',columnspan=2)
 
     mt.quit()
-
-
     
+# endregion
 
-
+# region Exit
 def toexit():
 
     win.withdraw()
 
-
+# endregion
 
 
 win=Tk()
@@ -229,7 +230,8 @@ mode_menu.add_command(label='Выйти',command=toexit)
 wall_menu.add_cascade(label='Меню',menu=mode_menu)
 
 win.title('Мой_кошелёк')
-photo = tk.PhotoImage(file="mw.ico")
+
+photo = PhotoImage(file = "mw1.png")
 win.iconphoto(True, photo)
 
 
@@ -245,7 +247,7 @@ win.resizable(False,False)
 
 global e1,e2,e3,e7
 
-#Поиск
+# region Поиск
 
 finduser=tk.Label(win,text='Поиск',bd=2,relief=tk.SUNKEN)
 
@@ -267,10 +269,10 @@ find_btn.config(font=('Calibri',12))
 
 find_btn.grid(row=0,column=2,sticky='wens',columnspan=2)
 
-#
+# endregion
 
 
-#Баланс
+# region Баланс
 
 bal_label=tk.Label(win,text='Баланс',width=12,bd=2,relief=tk.SUNKEN)
 
@@ -285,9 +287,9 @@ e2.config(font=('Calibri',12))
 
 e2.grid(row=1,column=1,sticky='wens')
 
-#
+# endregion
 
-#Пользователь
+# region Пользователь
 
 user_label=tk.Label(win,text='Пользователь',width=12,bd=2,relief=tk.SUNKEN)
 
@@ -314,13 +316,13 @@ e7.config(font=('Calibri',12))
 
 e7.grid(row=1,column=2,sticky='ens')
 
-#
+# endregion
 
 Empty1=tk.Label(win,bd=2,height=5,bg='pink')
 
 Empty1.grid(row=8,column=0,sticky='wens',columnspan=4)
 
-#Кнопки
+# region Кнопки
 
 balance_btn=tk.Button(win,text='Уведомление',bg='purple',bd=2,fg='orange',relief=tk.SUNKEN,width=5,height=1,command=notice)
 
@@ -350,7 +352,7 @@ cards_btn.config(font=('Calibri',12))
 
 cards_btn.grid(row=10,column=0,sticky='wens',columnspan=4)
 
-#
+# endregion
 
 date_now=datetime.datetime.now()
 
