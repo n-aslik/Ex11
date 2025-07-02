@@ -1,6 +1,7 @@
 from django import forms
 from contacts.models import worker
 from django.contrib.auth.forms import AuthenticationForm
+
 class workerform(forms.ModelForm):
     class Meta:
         model=worker
