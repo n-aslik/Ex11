@@ -23,7 +23,7 @@ def worker_create(request):
 
 def worker_update(request,id):
     works=worker.objects.all()
-    work=get_object_or_404(worker,id=id)
+    work=get_object_or_404(works,id=id)
     form=workerform(request.POST , instance=work)
     if form.is_valid():
         form.save()
